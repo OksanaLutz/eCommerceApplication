@@ -11,11 +11,15 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @EnableJpaRepositories("com.example.demo.model.persistence.repositories")
 @EntityScan("com.example.demo.model.persistence")
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class eCommerceApplication {
+
+	private static final Logger logger = LogManager.getLogger(eCommerceApplication.class);
 	@Bean
 	BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -23,6 +27,7 @@ public class eCommerceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(eCommerceApplication.class, args);
+		logger.info("Ecommerce Application Started");
 	}
 
 }

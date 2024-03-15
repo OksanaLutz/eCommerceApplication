@@ -17,10 +17,14 @@ import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.OrderRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
-	
+
+	private Logger logger = LoggerFactory.getLogger(OrderController.class);
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -33,10 +37,12 @@ public class OrderController {
 	public ResponseEntity<UserOrder> submit(@PathVariable String username) {
 		User user = userRepository.findByUsername(username);
 		if(user == null) {
+			logger.error("Submit order failed for user : " + username +" : User not found" );
 			return ResponseEntity.notFound().build();
 		}
 		UserOrder order = UserOrder.createFromCart(user.getCart());
 		orderRepository.save(order);
+		logger.info("Submit order succeeded for user : " + user.getUsername());
 		return ResponseEntity.ok(order);
 	}
 	
@@ -44,8 +50,11 @@ public class OrderController {
 	public ResponseEntity<List<UserOrder>> getOrdersForUser(@PathVariable String username) {
 		User user = userRepository.findByUsername(username);
 		if(user == null) {
+			logger.error("Not able to retrieve order history for user : " + username +" : User not found" );
 			return ResponseEntity.notFound().build();
+
 		}
+		logger.info("Order history retrieved for user : " + user.getUsername());
 		return ResponseEntity.ok(orderRepository.findByUser(user));
 	}
 }
